@@ -2,37 +2,40 @@
 
 对源特征进行检索
 """
-import torch, pdb, os, parselmouth
+import os
+import logging
+
+logger = logging.getLogger(__name__)
+
+import parselmouth
+import torch
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+# import torchcrepe
+from time import time as ttime
+
+# import pyworld
+import librosa
 import numpy as np
 import soundfile as sf
+import torch.nn.functional as F
+from fairseq import checkpoint_utils
 
 # from models import SynthesizerTrn256#hifigan_nonsf
 # from lib.infer_pack.models import SynthesizerTrn256NSF as SynthesizerTrn256#hifigan_nsf
-from lib.infer_pack.models import (
+from infer.lib.infer_pack.models import (
     SynthesizerTrnMs256NSFsid as SynthesizerTrn256,
 )  # hifigan_nsf
+from scipy.io import wavfile
 
 # from lib.infer_pack.models import SynthesizerTrnMs256NSFsid_sim as SynthesizerTrn256#hifigan_nsf
 # from models import SynthesizerTrn256NSFsim as SynthesizerTrn256#hifigan_nsf
 # from models import SynthesizerTrn256NSFsimFlow as SynthesizerTrn256#hifigan_nsf
 
 
-from scipy.io import wavfile
-from fairseq import checkpoint_utils
-
-# import pyworld
-import librosa
-import torch.nn.functional as F
-import scipy.signal as signal
-
-# import torchcrepe
-from time import time as ttime
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model_path = r"E:\codes\py39\vits_vc_gpu_train\hubert_base.pt"  #
-print("load model(s) from {}".format(model_path))
+model_path = r"E:\codes\py39\vits_vc_gpu_train\assets\hubert\hubert_base.pt"  #
+logger.info("Load model(s) from {}".format(model_path))
 models, saved_cfg, task = checkpoint_utils.load_model_ensemble_and_task(
     [model_path],
     suffix="",
@@ -75,7 +78,7 @@ net_g = SynthesizerTrn256(
 # weights=torch.load("infer/ft-mi-freeze-vocoder_true_1k.pt")
 # weights=torch.load("infer/ft-mi-sim1k.pt")
 weights = torch.load("infer/ft-mi-no_opt-no_dropout.pt")
-print(net_g.load_state_dict(weights, strict=True))
+logger.debug(net_g.load_state_dict(weights, strict=True))
 
 net_g.eval().to(device)
 net_g.half()
@@ -196,4 +199,4 @@ for idx, name in enumerate(
     wavfile.write("ft-mi-no_opt-no_dropout-%s.wav" % name, 40000, audio)  ##
 
 
-print(ta0, ta1, ta2)  #
+logger.debug("%.2fs %.2fs %.2fs", ta0, ta1, ta2)  #
