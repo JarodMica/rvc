@@ -51,7 +51,7 @@ class VC:
             "__type__": "update",
         }
 
-        if not sid:
+        if sid == "" or sid == []:
             if self.hubert_model is not None:  # 考虑到轮询, 需要加个判断看是否 sid 是由有模型切换到无模型的
                 logger.info("Clean model cache")
                 del (
@@ -224,7 +224,7 @@ class VC:
             )
         except:
             info = traceback.format_exc()
-            logger.warn(info)
+            logger.warning(info)
             return info, (None, None)
 
     def vc_multi(
