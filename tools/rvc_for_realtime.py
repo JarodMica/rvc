@@ -18,7 +18,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchcrepe
 
-from infer.lib.infer_pack.models import (
+from rvc.infer.lib.infer_pack.models import (
     SynthesizerTrnMs256NSFsid,
     SynthesizerTrnMs256NSFsid_nono,
     SynthesizerTrnMs768NSFsid,
@@ -265,7 +265,7 @@ class RVC:
 
     def get_f0_rmvpe(self, x, f0_up_key):
         if hasattr(self, "model_rmvpe") == False:
-            from infer.lib.rmvpe import RMVPE
+            from rvc.infer.lib.rmvpe import RMVPE
 
             logger.info("Loading rmvpe model")
             self.model_rmvpe = RMVPE(

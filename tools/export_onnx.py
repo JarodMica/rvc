@@ -1,5 +1,5 @@
 import torch
-from infer.lib.infer_pack.models_onnx import SynthesizerTrnMsNSFsidM
+from rvc.infer.lib.infer_pack.models_onnx import SynthesizerTrnMsNSFsidM
 
 if __name__ == "__main__":
     MoeVS = True  # 模型是否为MoeVoiceStudio（原MoeSS）使用

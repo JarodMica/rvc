@@ -29,12 +29,12 @@ Eğitim komut dosyası:<br>
 Önce WebUI'de eğitimi çalıştırabilirsiniz, ardından veri seti önişleme ve eğitiminin komut satırı sürümleri mesaj penceresinde görüntülenecektir.<br>
 
 Tahmin komut dosyası:<br>
-https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/myinfer.py<br>
+https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/myrvc.infer.py<br>
 
 
 örn:<br>
 
-runtime\python.exe myinfer.py 0 "E:\codes\py39\RVC-beta\todo-songs\1111.wav" "E:\codes\py39\logs\mi-test\added_IVF677_Flat_nprobe_7.index" harvest "test.wav" "weights/mi-test.pth" 0.6 cuda:0 True<br>
+runtime\python.exe myrvc.infer.py 0 "E:\codes\py39\RVC-beta\todo-songs\1111.wav" "E:\codes\py39\logs\mi-test\added_IVF677_Flat_nprobe_7.index" harvest "test.wav" "weights/mi-test.pth" 0.6 cuda:0 True<br>
 
 
 f0up_key=sys.argv[1]<br>

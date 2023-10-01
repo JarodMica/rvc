@@ -29,11 +29,11 @@ Script d'entraînement :<br>
 Vous pouvez d'abord lancer l'entraînement dans WebUI, et les versions en ligne de commande de la préparation du jeu de données et de l'entraînement seront affichées dans la fenêtre de message.<br>
 
 Script d'inférence :<br>
-https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/myinfer.py<br>
+https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/myrvc.infer.py<br>
 
 Par exemple :<br>
 
-runtime\python.exe myinfer.py 0 "E:\codes\py39\RVC-beta\todo-songs\1111.wav" "E:\codes\py39\logs\mi-test\added_IVF677_Flat_nprobe_7.index" récolte "test.wav" "weights/mi-test.pth" 0.6 cuda:0 True<br>
+runtime\python.exe myrvc.infer.py 0 "E:\codes\py39\RVC-beta\todo-songs\1111.wav" "E:\codes\py39\logs\mi-test\added_IVF677_Flat_nprobe_7.index" récolte "test.wav" "weights/mi-test.pth" 0.6 cuda:0 True<br>
 
 f0up_key=sys.argv[1]<br>
 input_path=sys.argv[2]<br>
@@ -59,7 +59,7 @@ is_half=bool(sys.argv[9])<br>
 
 <!-- Pour myinfer nouveau models :
 
-runtime\python.exe myinfer.py 0 "C:\ YOUR PATH FOR THE ROOT (RVC0813Nvidia)\INPUTS_VOCAL\vocal.wav" "C:\ YOUR PATH FOR THE ROOT (RVC0813Nvidia)\logs\Hagrid.index" harvest "C:\ YOUR PATH FOR THE ROOT (RVC0813Nvidia)\INPUTS_VOCAL\test.wav" "C:\ YOUR PATH FOR THE ROOT (RVC0813Nvidia)\weights\HagridFR.pth" 0.6 cuda:0 True 5 44100 44100 1.0 1.0 True
+runtime\python.exe myrvc.infer.py 0 "C:\ YOUR PATH FOR THE ROOT (RVC0813Nvidia)\INPUTS_VOCAL\vocal.wav" "C:\ YOUR PATH FOR THE ROOT (RVC0813Nvidia)\logs\Hagrid.index" harvest "C:\ YOUR PATH FOR THE ROOT (RVC0813Nvidia)\INPUTS_VOCAL\test.wav" "C:\ YOUR PATH FOR THE ROOT (RVC0813Nvidia)\weights\HagridFR.pth" 0.6 cuda:0 True 5 44100 44100 1.0 1.0 True
 
 
 f0up_key=sys.argv[1]                     
