@@ -4,12 +4,13 @@ from fairseq import checkpoint_utils
 
 
 def get_index_path_from_model(sid):
+    target_folder = "rvc/assets/index/"
     return next(
         (
             f
             for f in [
                 os.path.join(root, name)
-                for root, _, files in os.walk(os.getenv("index_root"), topdown=False)
+                for root, _, files in os.walk(target_folder, topdown=False)
                 for name in files
                 if name.endswith(".index") and "trained" not in name
             ]
@@ -21,7 +22,7 @@ def get_index_path_from_model(sid):
 
 def load_hubert(config):
     models, _, _ = checkpoint_utils.load_model_ensemble_and_task(
-        ["assets/hubert/hubert_base.pt"],
+        ["rvc/assets/hubert/hubert_base.pt"],
         suffix="",
     )
     hubert_model = models[0]

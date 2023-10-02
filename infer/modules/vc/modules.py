@@ -2,6 +2,7 @@ import traceback
 import logging
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.WARNING)
 
 import numpy as np
 import soundfile as sf
@@ -101,7 +102,8 @@ class VC:
                 "",
                 "",
             )
-        person = f'{os.getenv("weight_root")}/{sid}'
+        # person = f'{os.getenv("weight_root")}/{sid}'
+        person = os.path.join(os.getcwd(), sid)
         logger.info(f"Loading: {person}")
 
         self.cpt = torch.load(person, map_location="cpu")
@@ -144,7 +146,7 @@ class VC:
                 index,
             )
             if to_return_protect
-            else {"visible": True, "maximum": n_spk, "__type__": "update"}
+            else {"visible": True, "maximum": n_spk, "__type__": "update", "tgt_sr" : self.tgt_sr}
         )
 
     def vc_single(

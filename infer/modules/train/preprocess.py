@@ -4,15 +4,15 @@ import sys
 
 from scipy import signal
 
-# now_dir = os.getcwd()
-# sys.path.append(now_dir)
-# print(sys.argv)
-# inp_root = sys.argv[1]
-# sr = int(sys.argv[2])
-# n_p = int(sys.argv[3])
-# exp_dir = sys.argv[4]
-# noparallel = sys.argv[5] == "True"
-# per = float(sys.argv[6])
+now_dir = os.getcwd()
+sys.path.append(now_dir)
+print(sys.argv)
+inp_root = sys.argv[1]
+sr = int(sys.argv[2])
+n_p = int(sys.argv[3])
+exp_dir = sys.argv[4]
+noparallel = sys.argv[5] == "True"
+per = float(sys.argv[6])
 import multiprocessing
 import os
 import traceback
@@ -25,16 +25,16 @@ from rvc.infer.lib.audio import load_audio
 from rvc.infer.lib.slicer2 import Slicer
 
 mutex = multiprocessing.Lock()
+f = open("%s/preprocess.log" % exp_dir, "a+")
 
-def println(strr, exp_dir):
-    with open(f"{exp_dir}/preprocess.log", "a+", encoding="utf-8") as f:
-        mutex.acquire()
-        try:
-            print(strr)
-            f.write(f"{strr}\n")
-            f.flush()
-        finally:
-            mutex.release()
+
+def println(strr):
+    mutex.acquire()
+    print(strr)
+    f.write("%s\n" % strr)
+    f.flush()
+    mutex.release()
+
 
 class PreProcess:
     def __init__(self, sr, exp_dir, per=3.7):
@@ -54,8 +54,8 @@ class PreProcess:
         self.max = 0.9
         self.alpha = 0.75
         self.exp_dir = exp_dir
-        self.gt_wavs_dir = f"{exp_dir}/0_gt_wavs"
-        self.wavs16k_dir = f"{exp_dir}/1_16k_wavs"
+        self.gt_wavs_dir = "%s/0_gt_wavs" % exp_dir
+        self.wavs16k_dir = "%s/1_16k_wavs" % exp_dir
         os.makedirs(self.exp_dir, exist_ok=True)
         os.makedirs(self.gt_wavs_dir, exist_ok=True)
         os.makedirs(self.wavs16k_dir, exist_ok=True)
@@ -63,24 +63,26 @@ class PreProcess:
     def norm_write(self, tmp_audio, idx0, idx1):
         tmp_max = np.abs(tmp_audio).max()
         if tmp_max > 2.5:
-            print(f"{idx0}-{idx1}-{tmp_max}-filtered")
+            print("%s-%s-%s-filtered" % (idx0, idx1, tmp_max))
             return
         tmp_audio = (tmp_audio / tmp_max * (self.max * self.alpha)) + (
             1 - self.alpha
         ) * tmp_audio
         wavfile.write(
-            f"{self.gt_wavs_dir}/{idx0}_{idx1}.wav",
+            "%s/%s_%s.wav" % (self.gt_wavs_dir, idx0, idx1),
             self.sr,
             tmp_audio.astype(np.float32),
         )
-        tmp_audio = librosa.resample(tmp_audio, orig_sr=self.sr, target_sr=16000)
+        tmp_audio = librosa.resample(
+            tmp_audio, orig_sr=self.sr, target_sr=16000
+        )  # , res_type="soxr_vhq"
         wavfile.write(
-            f"{self.wavs16k_dir}/{idx0}_{idx1}.wav",
+            "%s/%s_%s.wav" % (self.wavs16k_dir, idx0, idx1),
             16000,
             tmp_audio.astype(np.float32),
         )
 
-    def pipeline(self, path, idx0, exp_dir):
+    def pipeline(self, path, idx0):
         try:
             audio = load_audio(path, self.sr)
             # zero phased digital filter cause pre-ringing noise...
@@ -102,44 +104,44 @@ class PreProcess:
                         idx1 += 1
                         break
                 self.norm_write(tmp_audio, idx0, idx1)
-            println(f"{path}->Suc.", exp_dir)
+            println("%s->Suc." % path)
         except:
-            println(f"{path}->{traceback.format_exc()}", exp_dir)
+            println("%s->%s" % (path, traceback.format_exc()))
 
-    def pipeline_mp(self, infos, exp_dir):
+    def pipeline_mp(self, infos):
         for path, idx0 in infos:
-            self.pipeline(path, idx0, exp_dir)
+            self.pipeline(path, idx0)
 
-    def pipeline_mp_inp_dir(self, inp_root, noparallel, n_p, exp_dir):
+    def pipeline_mp_inp_dir(self, inp_root, n_p):
         try:
             infos = [
-                (f"{inp_root}/{name}", idx)
-                for idx, name in enumerate(sorted(os.listdir(inp_root)))
+                ("%s/%s" % (inp_root, name), idx)
+                for idx, name in enumerate(sorted(list(os.listdir(inp_root))))
             ]
             if noparallel:
                 for i in range(n_p):
-                    self.pipeline_mp(infos[i::n_p], exp_dir)
+                    self.pipeline_mp(infos[i::n_p])
             else:
                 ps = []
                 for i in range(n_p):
                     p = multiprocessing.Process(
-                        target=self.pipeline_mp, args=(infos[i::n_p], exp_dir)
+                        target=self.pipeline_mp, args=(infos[i::n_p],)
                     )
                     ps.append(p)
                     p.start()
-                for p in ps:
-                    p.join()
+                for i in range(n_p):
+                    ps[i].join()
         except:
-            println(f"Fail. {traceback.format_exc()}", exp_dir)
+            println("Fail. %s" % traceback.format_exc())
 
 
-def preprocess_trainset(inp_root, sr, n_p, exp_dir, noparallel, per):
+def preprocess_trainset(inp_root, sr, n_p, exp_dir, per):
     pp = PreProcess(sr, exp_dir, per)
-    println("start preprocess", exp_dir)
-    # println(sys.argv, exp_dir)
-    pp.pipeline_mp_inp_dir(inp_root, noparallel, n_p, exp_dir)
-    println("end preprocess", exp_dir)
+    println("start preprocess")
+    println(sys.argv)
+    pp.pipeline_mp_inp_dir(inp_root, n_p)
+    println("end preprocess")
 
 
 if __name__ == "__main__":
-    print("Don't run this as a standalone script")
+    preprocess_trainset(inp_root, sr, n_p, exp_dir, per)

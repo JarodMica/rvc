@@ -208,7 +208,7 @@ def preprocess_dataset(trainset_dir, exp_dir, sr, n_p):
     f = open("%s/logs/%s/preprocess.log" % (now_dir, exp_dir), "w")
     f.close()
     per = 3.0 if config.is_half else 3.7
-    cmd = '"%s" rvc/infer/modules/train/preprocess.py "%s" %s %s "%s/logs/%s" %s %.1f' % (
+    cmd = '"%s" infer/modules/train/preprocess.py "%s" %s %s "%s/logs/%s" %s %.1f' % (
         config.python_cmd,
         trainset_dir,
         sr,

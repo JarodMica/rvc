@@ -143,11 +143,12 @@ class Pipeline(object):
             if not hasattr(self, "model_rmvpe"):
                 from rvc.infer.lib.rmvpe import RMVPE
 
-                logger.info(
-                    "Loading rmvpe model,%s" % "%s/rmvpe.pt" % os.environ["rmvpe_root"]
-                )
+                script_dir = os.getcwd()
+                rmvpe_model_path =os.path.join(script_dir, "rvc", "assets", "rmvpe", "rmvpe.pt")
+
+                logger.info(f"Loading rmvpe model,{rmvpe_model_path}")
                 self.model_rmvpe = RMVPE(
-                    "%s/rmvpe.pt" % os.environ["rmvpe_root"],
+                    rmvpe_model_path,
                     is_half=self.is_half,
                     device=self.device,
                 )
