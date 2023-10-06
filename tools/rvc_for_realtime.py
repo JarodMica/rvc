@@ -102,7 +102,7 @@ class RVC:
                 self.model = last_rvc.model
 
             if last_rvc is None or last_rvc.pth_path != self.pth_path:
-                cpt = torch.load(self.pth_path, map_location="cpu")
+                cpt = torch.load(self.pth_path, map_location="cpu", weights_only=True)
                 self.tgt_sr = cpt["config"][-1]
                 cpt["config"][-3] = cpt["weight"]["emb_g.weight"].shape[0]
                 self.if_f0 = cpt.get("f0", 1)

@@ -6,6 +6,7 @@ __pycache__
 /opt
 tools/aria2c/
 tools/flag.txt
+venv/
 
 # Imported from huggingface.co/lj1995/VoiceConversionWebUI
 /pretrained
