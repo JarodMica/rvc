@@ -1,3 +1,7 @@
+# Notes
+This is a fork of RVC and may not contain the latest features.  It is mainly used in my projects so that I have an "rvc package" that is useable for functions that I need.
+- I removed fairseq, so this needs to be manually installed or use the prebuilt wheels file
+
 <div align="center">
 
 <h1>Retrieval-based-Voice-Conversion-WebUI</h1>
